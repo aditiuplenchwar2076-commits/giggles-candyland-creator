@@ -1,0 +1,81 @@
+:root {
+  --primary-pink: #FFB7D5;
+  --primary-pink-dark: #D81B60;
+  --accent-blue: #A9D8F5;
+  --cloud-white: #FFF9FF;
+  --lavender: #DCCBFA;
+  --midnight: #11152F;
+  --star-yellow: #FFE88D;
+  --mint: #BDECCB;
+  --dark-text: #302A43;
+
+  --sans: 'Nunito', 'Fredoka', system-ui, -apple-system, sans-serif;
+  --heading: 'Fredoka', 'Nunito', system-ui, sans-serif;
+
+  font-family: var(--sans);
+  color: var(--dark-text);
+  background: var(--cloud-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #FFF9FF;
+  touch-action: manipulation;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF0F7;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FFB7D5;
+  border-radius: 4px;
+  border: 1px solid #FFF;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF80AB;
+}
+
+/* Focus styles for keyboard accessibility */
+:focus-visible {
+  outline: 2.5px solid var(--primary-pink-dark);
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

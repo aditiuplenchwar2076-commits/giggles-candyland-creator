@@ -1,0 +1,184 @@
+.settings-window-root,
+.about-window-root {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #FFF0F7;
+  border: 2px solid #FFB7D5;
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+.settings-icon {
+  font-size: 28px;
+}
+
+.settings-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #302A43;
+  margin: 0;
+}
+
+.settings-subtitle {
+  font-size: 12.5px;
+  color: #6A607D;
+  margin: 0;
+}
+
+.settings-sections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.setting-card {
+  background: #FFF9FF;
+  border: 1.5px solid #E9DEFB;
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.setting-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-icon {
+  font-size: 22px;
+}
+
+.card-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #302A43;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: #726A84;
+}
+
+.toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #302A43;
+}
+
+.toggle-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #D81B60;
+  cursor: pointer;
+}
+
+.setting-subhint {
+  font-size: 11.5px;
+  color: #8C7E6A;
+  margin: 4px 0 0;
+}
+
+.btn-sm {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+/* About Window */
+.about-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #FFE8F0 0%, #E9DEFB 100%);
+  border: 2px solid #FFB7D5;
+  border-radius: 20px;
+  padding: 16px;
+}
+
+.about-character-img {
+  width: 90px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(255, 110, 167, 0.3);
+}
+
+.about-badge {
+  background: #11152F;
+  color: #FFE88D;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+
+.about-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #302A43;
+  margin: 4px 0;
+}
+
+.about-role {
+  font-size: 13px;
+  color: #D81B60;
+  font-weight: 600;
+  margin: 0;
+}
+
+.about-story-card {
+  background: #FFF9FF;
+  border: 2px solid #DCCBFA;
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about-story-card h4 {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 15px;
+  color: #302A43;
+  margin: 6px 0 2px;
+}
+
+.about-story-card p {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #4A3E5C;
+  margin: 0;
+}
+
+.about-features-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #4A3E5C;
+}

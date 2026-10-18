@@ -1,0 +1,157 @@
+/* Retro Windows 98 / 2000 Pastel Candy Window */
+.retro-window {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #FFF9FF;
+  border: 3px solid #FFB7D5;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(48, 42, 67, 0.16), 0 4px 12px rgba(255, 183, 213, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.08s ease, box-shadow 0.2s ease;
+  user-select: text;
+}
+
+.retro-window:focus-within {
+  border-color: #D81B60;
+  box-shadow: 0 20px 48px rgba(216, 27, 96, 0.22), 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.retro-window.minimized {
+  display: none !important;
+}
+
+.retro-window.maximized {
+  position: fixed !important;
+  top: 10px !important;
+  left: 10px !important;
+  width: calc(100vw - 20px) !important;
+  height: calc(100vh - 65px) !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  transform: none !important;
+  border-radius: 12px;
+}
+
+.retro-window.dragging {
+  opacity: 0.94;
+  cursor: grabbing;
+}
+
+/* Titlebar */
+.retro-window-titlebar {
+  background: linear-gradient(90deg, #FFB7D5 0%, #DCCBFA 60%, #A9D8F5 100%);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #FF80AB;
+  cursor: grab;
+  user-select: none;
+}
+
+.titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.window-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.window-title-text {
+  font-family: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #302A43;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.2px;
+}
+
+/* Window Control Buttons */
+.titlebar-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.window-control-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(48, 42, 67, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  background: #FFF9FF;
+  color: #302A43;
+  padding: 0;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.window-control-btn:hover {
+  transform: scale(1.1);
+  background: #FFE88D;
+}
+
+.window-control-btn.btn-close:hover {
+  background: #FF5252;
+  color: #FFF;
+  border-color: #D32F2F;
+}
+
+/* Window Body */
+.retro-window-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #FFF9FF;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile Friendly Overrides (< 768px) */
+@media (max-width: 767px) {
+  .retro-window {
+    position: fixed !important;
+    top: 8px !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 56px !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform: none !important;
+    border-radius: 16px;
+  }
+
+  .retro-window-titlebar {
+    cursor: default;
+    padding: 10px 14px;
+  }
+
+  .window-control-btn.btn-max {
+    display: none; /* Mobile is always maximized */
+  }
+
+  .window-control-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+}

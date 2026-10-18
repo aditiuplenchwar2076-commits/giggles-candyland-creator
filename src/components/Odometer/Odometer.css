@@ -1,0 +1,61 @@
+.retro-odometer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #11152F;
+  border: 2px solid #FFB7D5;
+  border-radius: 8px;
+  padding: 3px 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(255, 183, 213, 0.3);
+  user-select: none;
+}
+
+.odometer-label {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10px;
+  font-weight: 800;
+  color: #FFE88D;
+  letter-spacing: 0.5px;
+}
+
+.odometer-wheels {
+  display: flex;
+  gap: 2px;
+}
+
+.odometer-wheel {
+  width: 14px;
+  height: 20px;
+  background: linear-gradient(180deg, #1A1F3D 0%, #080A18 50%, #1A1F3D 100%);
+  border: 1px solid #303761;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.odometer-digit {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  font-weight: 800;
+  color: #FFF9FF;
+  line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .retro-odometer {
+    padding: 2px 5px;
+    gap: 4px;
+  }
+  .odometer-label {
+    display: none;
+  }
+  .odometer-wheel {
+    width: 12px;
+    height: 17px;
+  }
+  .odometer-digit {
+    font-size: 11px;
+  }
+}

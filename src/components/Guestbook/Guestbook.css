@@ -1,0 +1,209 @@
+.guestbook-root {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.guestbook-header-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #FFF0F7;
+  border: 2px solid #FFB7D5;
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+.guestbook-icon {
+  font-size: 32px;
+}
+
+.guestbook-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #302A43;
+  margin: 0;
+}
+
+.guestbook-subtitle {
+  font-size: 12.5px;
+  color: #726A84;
+  margin: 0;
+}
+
+/* Form Card */
+.guestbook-form-card {
+  background: #FFF9FF;
+  border: 2px solid #DCCBFA;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(220, 203, 250, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row-top {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.name-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #5C5270;
+}
+
+.gb-input,
+.gb-textarea {
+  background: #FAF5FD;
+  border: 1.5px solid #DCCBFA;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 13.5px;
+  color: #302A43;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.gb-input:focus,
+.gb-textarea:focus {
+  border-color: #D81B60;
+  background: #FFF;
+}
+
+.avatar-picker-row {
+  display: flex;
+  gap: 4px;
+}
+
+.avatar-choice-btn {
+  background: #F4EFF8;
+  border: 1.5px solid #DCCBFA;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.avatar-choice-btn.active {
+  background: #FFE88D;
+  border-color: #FFA000;
+  transform: scale(1.15);
+}
+
+.form-submit-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.gb-submit-btn {
+  padding: 8px 18px;
+}
+
+.gb-feedback-msg {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #2E7D32;
+}
+
+/* Entries Grid */
+.guestbook-entries-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.scrapbook-sticky-note {
+  background: linear-gradient(135deg, #FFFDEB 0%, #FFF5D6 100%);
+  border: 1.5px solid #FFE082;
+  border-radius: 14px;
+  padding: 14px;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.15s ease;
+}
+
+.scrapbook-sticky-note:hover {
+  transform: translateY(-2px) rotate(-0.5deg);
+}
+
+.note-pin {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  background: #FF5252;
+  border-radius: 50%;
+  border: 2px solid #FFF;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.note-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.note-avatar {
+  font-size: 20px;
+}
+
+.note-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.note-author {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #302A43;
+}
+
+.note-date {
+  font-size: 10.5px;
+  color: #8C7E6A;
+}
+
+.note-sticker {
+  font-size: 18px;
+}
+
+.note-body {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #4A3E2C;
+  margin: 0;
+  word-break: break-word;
+}

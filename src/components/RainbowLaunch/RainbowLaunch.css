@@ -1,0 +1,176 @@
+.rainbow-launch-root {
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  gap: 12px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* Header */
+.game-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #FFF0F7;
+  border: 2px solid #FFB7D5;
+  border-radius: 14px;
+  padding: 10px 16px;
+}
+
+.game-meta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.game-level-tag {
+  font-size: 11px;
+  font-weight: 800;
+  color: #D81B60;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.game-level-title {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #302A43;
+  margin: 0;
+}
+
+.game-stats-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.game-stat-badge {
+  background: #11152F;
+  border: 1.5px solid #FFB7D5;
+  border-radius: 8px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-label {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 800;
+  color: #FFE88D;
+}
+
+.stat-val {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: 800;
+  color: #FFF9FF;
+}
+
+.shots-badge .stat-val {
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+/* Canvas Wrapper */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 800 / 480;
+  max-height: 480px;
+  border: 3px solid #DCCBFA;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(48, 42, 67, 0.12);
+  touch-action: none;
+}
+
+.physics-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+}
+
+/* Overlays */
+.game-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 21, 47, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+  animation: modal-fade-in 0.25s ease;
+}
+
+@keyframes modal-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.game-modal-card {
+  background: #FFF9FF;
+  border: 3px solid #FF80AB;
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-emoji {
+  font-size: 36px;
+}
+
+.game-modal-card h3 {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 18px;
+  color: #302A43;
+  margin: 0;
+}
+
+.game-modal-card p {
+  font-size: 13.5px;
+  color: #635A75;
+  margin: 0;
+}
+
+/* Bottom bar */
+.game-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 6px 4px;
+}
+
+.game-tip {
+  font-size: 12.5px;
+  color: #635A75;
+  flex: 1;
+}
+
+.restart-btn {
+  font-size: 12px;
+  padding: 6px 14px;
+}
+
+@media (max-width: 640px) {
+  .game-top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
