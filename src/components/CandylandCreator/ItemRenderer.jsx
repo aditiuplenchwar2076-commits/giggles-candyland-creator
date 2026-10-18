@@ -4,8 +4,43 @@ import React from 'react';
  * High-quality vector SVG artwork for Candyland items.
  * Each item accepts a dynamic primary `color` and renders shadows, highlights, and details.
  */
-export function ItemRenderer({ typeId, color = '#FF6EA7', size = 64 }) {
+export function ItemRenderer({
+  typeId,
+  color = '#FF6EA7',
+  size = 64,
+  text = '',
+  fontSize = 24,
+  font = 'Fredoka',
+  outlineMode = false,
+}) {
+  const isOutline = outlineMode || color === '#FFFFFF';
+  const effectiveFill = isOutline ? '#FFFFFF' : color;
+  const outlineStroke = isOutline ? '#302A43' : 'none';
+  const outlineStrokeWidth = isOutline ? 2.5 : 0;
   const shadowColor = 'rgba(0, 0, 0, 0.12)';
+
+  if (typeId === 'text') {
+    return (
+      <div
+        className="candyland-placed-text"
+        style={{
+          color: color || '#FF6EA7',
+          fontSize: `${fontSize || 24}px`,
+          fontFamily: font ? `'${font}', 'Fredoka', 'Nunito', cursive, sans-serif` : "'Fredoka', 'Nunito', cursive, sans-serif",
+          fontWeight: 700,
+          textShadow: isOutline
+            ? '-1px -1px 0 #302A43, 1px -1px 0 #302A43, -1px 1px 0 #302A43, 1px 1px 0 #302A43'
+            : '0 2px 4px rgba(0, 0, 0, 0.15), 0 0 10px rgba(255, 255, 255, 0.85)',
+          whiteSpace: 'nowrap',
+          userSelect: 'none',
+          lineHeight: 1.1,
+          padding: '2px 6px',
+        }}
+      >
+        {text || 'Candy Cloud'}
+      </div>
+    );
+  }
 
   switch (typeId) {
     case 'lollipop':

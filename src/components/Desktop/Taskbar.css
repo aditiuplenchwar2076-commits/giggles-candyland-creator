@@ -5,8 +5,8 @@
   left: 0;
   right: 0;
   height: 44px;
-  background: #FFF9FF;
-  border-top: 2.5px solid #FFB7D5;
+  background: var(--theme-taskbar-bg, #FFF9FF);
+  border-top: 2.5px solid var(--primary-pink, #FFB7D5);
   box-shadow: 0 -2px 10px rgba(255, 183, 213, 0.35);
   display: flex;
   align-items: center;

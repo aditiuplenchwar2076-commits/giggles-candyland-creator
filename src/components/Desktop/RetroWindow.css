@@ -42,7 +42,7 @@
 
 /* Titlebar */
 .retro-window-titlebar {
-  background: linear-gradient(90deg, #FFB7D5 0%, #DCCBFA 60%, #A9D8F5 100%);
+  background: var(--theme-titlebar-bg, linear-gradient(90deg, #FFB7D5 0%, #DCCBFA 60%, #A9D8F5 100%));
   padding: 8px 12px;
   display: flex;
   align-items: center;

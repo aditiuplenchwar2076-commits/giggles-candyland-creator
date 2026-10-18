@@ -1,7 +1,13 @@
 import React from 'react';
 import { COLOR_PALETTE } from './candyCatalog';
 
-export function ColorPalettePanel({ currentColor, onSelectColor, selectedItem }) {
+export function ColorPalettePanel({
+  currentColor,
+  onSelectColor,
+  selectedItem,
+  selectedItemScale = 1,
+  onChangeScale,
+}) {
   return (
     <div className="creator-panel color-panel" role="region" aria-label="Color Palette Selector">
       <div className="panel-header">
@@ -12,7 +18,7 @@ export function ColorPalettePanel({ currentColor, onSelectColor, selectedItem })
         <span className="panel-subtitle">
           {selectedItem
             ? `Tinting selected ${selectedItem.name}`
-            : 'Color for next candy or charm'}
+            : 'Color for next candy, charm or text'}
         </span>
       </div>
 
@@ -40,6 +46,46 @@ export function ColorPalettePanel({ currentColor, onSelectColor, selectedItem })
           );
         })}
       </div>
+
+      {/* Scale Resizing Slider for Selected Item */}
+      {selectedItem && onChangeScale && (
+        <div className="item-scale-panel-group">
+          <div className="scale-header-row">
+            <span className="scale-label">📐 Selected Size:</span>
+            <span className="scale-value-badge">{Math.round(selectedItemScale * 100)}%</span>
+          </div>
+          <div className="scale-slider-row">
+            <button
+              type="button"
+              className="scale-step-btn"
+              onClick={() => onChangeScale(Math.max(0.4, Number((selectedItemScale - 0.15).toFixed(2))))}
+              title="Shrink item"
+              aria-label="Shrink item"
+            >
+              ➖
+            </button>
+            <input
+              type="range"
+              min="0.4"
+              max="2.5"
+              step="0.05"
+              value={selectedItemScale}
+              onChange={(e) => onChangeScale(parseFloat(e.target.value))}
+              className="scale-slider-input"
+              aria-label="Adjust item scale"
+            />
+            <button
+              type="button"
+              className="scale-step-btn"
+              onClick={() => onChangeScale(Math.min(2.5, Number((selectedItemScale + 0.15).toFixed(2))))}
+              title="Enlarge item"
+              aria-label="Enlarge item"
+            >
+              ➕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

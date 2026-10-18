@@ -174,3 +174,49 @@
     align-items: flex-start;
   }
 }
+
+/* Keyboard Guide Banner */
+.game-keyboard-guide-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 6px 12px;
+  background: #FFF0F7;
+  border: 1.5px solid #FFB7D5;
+  border-radius: 12px;
+}
+
+.guide-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #302A43;
+}
+
+.chip-key {
+  background: #11152F;
+  color: #FFE88D;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 11px;
+}
+
+.chip-desc {
+  color: #635A75;
+}
+
+.touch-chip {
+  color: #D81B60;
+  border-left: 1px solid #FFD1E3;
+  padding-left: 8px;
+}
+
+.physics-canvas:focus-visible {
+  outline: 3px solid #D81B60;
+  outline-offset: 2px;
+}

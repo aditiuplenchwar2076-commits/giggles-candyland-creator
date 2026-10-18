@@ -182,3 +182,57 @@
   font-size: 13px;
   color: #4A3E5C;
 }
+
+/* Theme Picker Row */
+.theme-picker-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.theme-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFF;
+  border: 2px solid #E9DEFB;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #302A43;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.theme-chip-btn:hover {
+  border-color: #D81B60;
+  background: #FFF0F7;
+}
+
+.theme-chip-btn.active {
+  border-color: #D81B60;
+  background: #FFF0F7;
+  color: #D81B60;
+  box-shadow: 0 2px 8px rgba(216, 27, 96, 0.25);
+}
+
+.theme-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.dot-pink {
+  background: #FF80AB;
+}
+
+.dot-blue {
+  background: #42A5F5;
+}
+
+.dot-lavender {
+  background: #9C27B0;
+}

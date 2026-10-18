@@ -485,12 +485,76 @@ export function RainbowLaunch() {
     }
   };
 
+  // Keyboard Aiming and Firing Controls
+  useEffect(() => {
+    let tension = 50;
+    let angleRad = Math.PI * 0.82;
+
+    const handleKeyDown = (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+      if (gameState !== 'aiming' || shotsLeft <= 0) return;
+
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        tension = Math.min(maxPull, tension + 6);
+        physicsRef.current.isPulling = true;
+        physicsRef.current.dragPos = {
+          x: anchor.x - Math.cos(angleRad) * tension,
+          y: anchor.y + Math.sin(angleRad) * tension,
+        };
+        soundService.playStretch(0.2);
+        gigglesReact('slingshot_stretch');
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        tension = Math.max(15, tension - 6);
+        physicsRef.current.isPulling = true;
+        physicsRef.current.dragPos = {
+          x: anchor.x - Math.cos(angleRad) * tension,
+          y: anchor.y + Math.sin(angleRad) * tension,
+        };
+        soundService.playStretch(0.2);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        angleRad = Math.min(Math.PI * 0.96, angleRad + 0.07);
+        physicsRef.current.isPulling = true;
+        physicsRef.current.dragPos = {
+          x: anchor.x - Math.cos(angleRad) * tension,
+          y: anchor.y + Math.sin(angleRad) * tension,
+        };
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        angleRad = Math.max(Math.PI * 0.55, angleRad - 0.07);
+        physicsRef.current.isPulling = true;
+        physicsRef.current.dragPos = {
+          x: anchor.x - Math.cos(angleRad) * tension,
+          y: anchor.y + Math.sin(angleRad) * tension,
+        };
+      } else if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (physicsRef.current.isPulling) {
+          handlePointerUp();
+        } else {
+          physicsRef.current.isPulling = true;
+          physicsRef.current.dragPos = {
+            x: anchor.x - Math.cos(angleRad) * tension,
+            y: anchor.y + Math.sin(angleRad) * tension,
+          };
+          setTimeout(() => {
+            handlePointerUp();
+          }, 60);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [anchor.x, anchor.y, gameState, gigglesReact, maxPull, shotsLeft]);
+
   const handleNextLevel = () => {
     if (currentLevelIndex + 1 < LEVELS.length) {
       initLevel(currentLevelIndex + 1);
       gigglesReact('level_completed');
     } else {
-      // Finished all levels!
       alert('🏆 CANDYLAND CHAMPION! You completed all Rainbow Launch levels!');
       initLevel(0);
     }
@@ -521,13 +585,36 @@ export function RainbowLaunch() {
         </div>
       </div>
 
+      {/* Accessible Keyboard & Touch Controls Banner */}
+      <div className="game-keyboard-guide-banner" role="note" aria-label="Game controls guide">
+        <div className="guide-chip">
+          <span className="chip-key">←</span> <span className="chip-key">→</span>
+          <span className="chip-desc">Pull Tension</span>
+        </div>
+        <div className="guide-chip">
+          <span className="chip-key">↑</span> <span className="chip-key">↓</span>
+          <span className="chip-desc">Elevation Angle</span>
+        </div>
+        <div className="guide-chip">
+          <span className="chip-key">Space</span> / <span className="chip-key">Enter</span>
+          <span className="chip-desc">Launch Candy!</span>
+        </div>
+        <div className="guide-chip touch-chip">
+          <span className="chip-icon" aria-hidden="true">📱</span>
+          <span className="chip-desc">Or Touch/Drag Pouch</span>
+        </div>
+      </div>
+
       {/* Physics Canvas Area */}
       <div className="canvas-wrapper">
         <canvas
           ref={canvasRef}
           width={800}
           height={480}
+          tabIndex={0}
           className="physics-canvas"
+          role="application"
+          aria-label="Slingshot canvas. Use arrow keys to adjust tension and angle, Spacebar to launch, or drag with mouse or touch."
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -578,7 +665,7 @@ export function RainbowLaunch() {
       {/* Controls & Tip Bar */}
       <div className="game-bottom-bar">
         <span className="game-tip">
-          🎯 <strong>How to play:</strong> Click and drag the candy backwards from the slingshot, adjust your angle using the dotted guide, and release to fire!
+          🎯 <strong>Tip:</strong> Pull back firmly to give your gumball speed, and watch the dotted trajectory guide!
         </span>
         <button
           type="button"

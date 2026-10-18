@@ -1,4 +1,4 @@
-:root {
+:root, [data-theme="candy-pink"] {
   --primary-pink: #FFB7D5;
   --primary-pink-dark: #D81B60;
   --accent-blue: #A9D8F5;
@@ -9,6 +9,11 @@
   --mint: #BDECCB;
   --dark-text: #302A43;
 
+  --theme-wallpaper-bg: radial-gradient(circle at 75% 25%, #FFF0F7 0%, #F5E8FF 40%, #E3F2FD 80%, #DCEEFF 100%);
+  --theme-titlebar-bg: linear-gradient(90deg, #FF6EA7, #FF80AB);
+  --theme-taskbar-bg: rgba(255, 240, 247, 0.95);
+  --theme-accent-highlight: #FF6EA7;
+
   --sans: 'Nunito', 'Fredoka', system-ui, -apple-system, sans-serif;
   --heading: 'Fredoka', 'Nunito', system-ui, sans-serif;
 
@@ -17,6 +22,40 @@
   background: var(--cloud-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme="dream-blue"] {
+  --primary-pink: #A9D8F5;
+  --primary-pink-dark: #0288D1;
+  --accent-blue: #B2EBF2;
+  --cloud-white: #F4FBFF;
+  --lavender: #C5CAE9;
+  --midnight: #0A192F;
+  --star-yellow: #FFF176;
+  --mint: #80CBC4;
+  --dark-text: #1A2638;
+
+  --theme-wallpaper-bg: radial-gradient(circle at 75% 25%, #E3F2FD 0%, #E0F7FA 40%, #E8F5E9 80%, #FFF9C4 100%);
+  --theme-titlebar-bg: linear-gradient(90deg, #0288D1, #26C6DA);
+  --theme-taskbar-bg: rgba(227, 242, 253, 0.95);
+  --theme-accent-highlight: #0288D1;
+}
+
+[data-theme="lavender-night"] {
+  --primary-pink: #D1C4E9;
+  --primary-pink-dark: #7E57C2;
+  --accent-blue: #FFE082;
+  --cloud-white: #11152F;
+  --lavender: #9575CD;
+  --midnight: #0B0E1E;
+  --star-yellow: #FFE88D;
+  --mint: #80DEEA;
+  --dark-text: #F3EFFC;
+
+  --theme-wallpaper-bg: radial-gradient(circle at 75% 25%, #1B1947 0%, #2A1F54 45%, #141130 80%, #0E0C22 100%);
+  --theme-titlebar-bg: linear-gradient(90deg, #7E57C2, #9C27B0);
+  --theme-taskbar-bg: rgba(27, 25, 71, 0.96);
+  --theme-accent-highlight: #B388FF;
 }
 
 * {

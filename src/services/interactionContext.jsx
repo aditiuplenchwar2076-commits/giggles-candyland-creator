@@ -121,6 +121,16 @@ export function InteractionProvider({ children }) {
   const [chaosMode, setChaosMode] = useState(false);
   const [commentaryMuted, setCommentaryMuted] = useState(false);
 
+  // Desktop Theme state (Candy Pink | Dream Blue | Lavender Night)
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('giggles_theme') || 'candy-pink';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('giggles_theme', theme);
+  }, [theme]);
+
   // Real interaction hit counter (odometer)
   const [hitCount, setHitCount] = useState(() => {
     const saved = localStorage.getItem('giggles_hit_count');
@@ -270,6 +280,8 @@ export function InteractionProvider({ children }) {
   return (
     <InteractionContext.Provider
       value={{
+        theme,
+        setTheme,
         globalMute,
         setGlobalMute,
         chaosMode,

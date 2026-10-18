@@ -19,7 +19,7 @@
 .wallpaper-sky-mesh {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 75% 25%, #FFF0F7 0%, #F5E8FF 40%, #E3F2FD 80%, #DCEEFF 100%);
+  background: var(--theme-wallpaper-bg, radial-gradient(circle at 75% 25%, #FFF0F7 0%, #F5E8FF 40%, #E3F2FD 80%, #DCEEFF 100%));
 }
 
 /* Clouds in Wallpaper */
