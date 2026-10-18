@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { soundService } from '../../services/soundService';
 import { useInteraction } from '../../services/interactionContext';
 import './EasterEggModal.css';
