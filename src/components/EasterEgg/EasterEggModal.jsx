@@ -375,7 +375,7 @@ export function EasterEggModal({ isOpen, onClose }) {
 
             {/* Expandable Key Configuration Card */}
             {showKeyInput && (
-              <form className="gemini-key-card" onSubmit={handleSaveApiKey}>
+              <div className="gemini-key-card">
                 <div className="key-card-header">
                   <span className="key-card-title">🔑 Google Gemini API Configuration</span>
                   <a
@@ -395,7 +395,7 @@ export function EasterEggModal({ isOpen, onClose }) {
                     value={apiKeyInput}
                     onChange={(e) => setApiKeyInput(e.target.value)}
                   />
-                  <button type="submit" className="btn-save-key">
+                  <button type="button" className="btn-save-key" onClick={handleSaveApiKey}>
                     {keySavedToast ? '✅ Saved!' : 'Save Key'}
                   </button>
                 </div>
@@ -403,7 +403,7 @@ export function EasterEggModal({ isOpen, onClose }) {
                   Your key is stored securely in your browser's local storage and used directly for baby transformations.
                   You can also set <code>GEMINI_API_KEY</code> in <code>.env.local</code>.
                 </p>
-              </form>
+              </div>
             )}
 
             {/* Error Message Banner */}

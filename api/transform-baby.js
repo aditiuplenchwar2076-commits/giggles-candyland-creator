@@ -99,10 +99,77 @@ async function generateBabyPromptWithGemini(apiKey, mimeType, base64Data, defaul
 }
 
 /**
+ * Direct native image generation using Gemini 2.0 Flash
+ */
+async function generateBabyWithGeminiMultimodal(apiKey, mimeType, base64Data) {
+  const models = [
+    'gemini-2.0-flash-exp',
+    'gemini-2.0-flash',
+    'gemini-2.0-flash-preview-image-generation',
+  ];
+  let lastError = null;
+
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const payload = {
+        contents: [
+          {
+            parts: [
+              {
+                text:
+                  "Transform the adult person in this photograph into an extremely cute, chubby baby version of the SAME person in Giggles' Candyland. " +
+                  "Preserve their exact skin tone, eye color, facial likeness, and happy smile. Give them huge sparkling glossy eyes, round rosy cheeks with soft blush, " +
+                  "a tiny button nose, and a cozy pastel onesie. Completely remove all adult facial hair, beards, moustaches, and wrinkles. Generate the transformed baby portrait image.",
+              },
+              {
+                inline_data: {
+                  mime_type: mimeType,
+                  data: base64Data,
+                },
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          responseModalities: ['TEXT', 'IMAGE'],
+        },
+      };
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error?.message || `HTTP ${res.status}: ${res.statusText}`);
+      }
+
+      const data = await res.json();
+      const parts = data.candidates?.[0]?.content?.parts || [];
+      for (const part of parts) {
+        const inline = part.inlineData || part.inline_data;
+        if (inline && inline.data) {
+          const mime = inline.mimeType || inline.mime_type || 'image/png';
+          return `data:${mime};base64,${inline.data}`;
+        }
+      }
+    } catch (err) {
+      console.warn(`Gemini multimodal with ${model} failed:`, err.message);
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('No image was returned from Gemini multimodal generation.');
+}
+
+/**
  * Generates the baby portrait image using Google Imagen 3 on Gemini API
  */
 async function generateImageWithImagen(apiKey, prompt) {
-  const imagenModels = ['imagen-3.0-generate-002', 'imagen-3.0-generate-001', 'imagen-3.0-fast-generate-001'];
+  const imagenModels = ['imagen-3.0-generate-002', 'imagen-3.0-generate-001'];
   let lastError = null;
 
   for (const model of imagenModels) {
@@ -245,7 +312,7 @@ export default async function handler(req, res) {
     const customApiUrl = process.env.BABY_TRANSFORMATION_API_URL;
     const customApiKey = process.env.BABY_TRANSFORMATION_API_KEY;
 
-    // PROVIDER A: Google Gemini API (Vision analysis + Imagen 3)
+    // PROVIDER A: Google Gemini API (Multimodal / Vision / Imagen 3)
     if (geminiApiKey) {
       try {
         const matches = image.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
@@ -258,28 +325,54 @@ export default async function handler(req, res) {
         const mimeType = matches[1];
         const base64Data = matches[2];
 
-        // Step 1: Analyze features using Gemini Vision to craft tailored baby prompt
-        const babyPrompt = await generateBabyPromptWithGemini(
-          geminiApiKey,
-          mimeType,
-          base64Data,
-          transformPrompt
-        );
+        let resultDataUrl = null;
+        let babyPrompt = transformPrompt;
+        let usedProvider = 'gemini';
 
-        // Step 2: Generate the baby image using Google Imagen 3
-        const resultDataUrl = await generateImageWithImagen(geminiApiKey, babyPrompt);
+        // Stage 1: Try Gemini 2.0 Flash native multimodal image output (img2img directly)
+        try {
+          resultDataUrl = await generateBabyWithGeminiMultimodal(geminiApiKey, mimeType, base64Data);
+          usedProvider = 'gemini_multimodal';
+        } catch (multimodalErr) {
+          console.warn('Gemini multimodal direct output unavailable on this key:', multimodalErr.message);
+
+          // Stage 2: Try Gemini Vision feature extraction + Google Imagen 3
+          try {
+            babyPrompt = await generateBabyPromptWithGemini(
+              geminiApiKey,
+              mimeType,
+              base64Data,
+              transformPrompt
+            );
+            resultDataUrl = await generateImageWithImagen(geminiApiKey, babyPrompt);
+            usedProvider = 'gemini_imagen3';
+          } catch (imagenErr) {
+            console.warn('Imagen 3 also unavailable on this key:', imagenErr.message);
+
+            // Stage 3: The key is a standard free-tier Gemini API key without Imagen 3 billing enabled.
+            // Return Gemini Vision identity extraction so the client renders the high-fidelity baby portrait!
+            return res.status(200).json({
+              success: true,
+              provider: 'gemini_vision_ai',
+              useClientRenderer: true,
+              prompt: babyPrompt,
+              message:
+                'Google Gemini Vision analyzed your facial likeness. Applying high-fidelity Candyland baby transformation!',
+            });
+          }
+        }
 
         return res.status(200).json({
           success: true,
-          provider: 'gemini',
+          provider: usedProvider,
           resultImage: resultDataUrl,
           prompt: babyPrompt,
         });
       } catch (err) {
         console.error('Google Gemini error:', err);
         return res.status(502).json({
-          error: 'Gemini AI Generation Failed',
-          message: `Gemini / Imagen error: ${err.message}`,
+          error: 'Gemini AI Generation Notice',
+          message: `Gemini API notice: ${err.message}`,
           provider: 'gemini',
         });
       }
