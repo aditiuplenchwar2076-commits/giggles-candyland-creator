@@ -221,41 +221,56 @@
 
 /* Minimized Mode */
 .giggles-global-companion.minimized .companion-sprite-img {
-  width: 52px;
-  height: 52px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   object-fit: cover;
   border: 2.5px solid #FF80AB;
+  box-shadow: 0 4px 14px rgba(216, 27, 96, 0.4);
+}
+
+.giggles-global-companion.minimized .companion-cloud-glow {
+  display: none;
 }
 
 .giggles-global-companion.minimized .companion-bubble {
   display: none;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 640px) {
+.giggles-global-companion.minimized .companion-mini-toolbar {
+  display: none;
+}
+
+/* Mobile Responsiveness (< 768px) */
+@media (max-width: 767px) {
   .giggles-global-companion.bottom-right {
-    right: 10px;
-    bottom: 58px;
+    right: 12px;
+    bottom: 54px;
   }
 
   .giggles-global-companion.bottom-left {
-    left: 10px;
-    bottom: 58px;
+    left: 12px;
+    bottom: 54px;
   }
 
   .companion-sprite-img {
-    width: 105px;
+    width: 85px;
   }
 
   .companion-bubble {
-    max-width: 220px;
-    font-size: 12px;
+    max-width: 200px;
+    font-size: 11.5px;
     padding: 8px 10px;
   }
 
   .bubble-content-text {
-    font-size: 12px;
+    font-size: 11.5px;
+  }
+
+  /* When minimized on mobile, compact FAB corner placement */
+  .giggles-global-companion.minimized .companion-sprite-img {
+    width: 42px;
+    height: 42px;
   }
 }
 

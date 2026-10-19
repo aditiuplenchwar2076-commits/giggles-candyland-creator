@@ -100,6 +100,19 @@ export function StartMenu({ isOpen, onClose }) {
           <button
             type="button"
             className="start-item-btn"
+            onClick={() => handleLaunch('easter_egg')}
+            role="menuitem"
+          >
+            <span className="start-item-icon">📸</span>
+            <div className="start-item-text">
+              <span className="start-item-title">Baby-Me Magic</span>
+              <span className="start-item-desc">Turn your photo into Baby Giggles ✨</span>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            className="start-item-btn"
             onClick={() => handleLaunch('guestbook')}
             role="menuitem"
           >

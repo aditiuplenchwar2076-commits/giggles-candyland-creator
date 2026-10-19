@@ -6,9 +6,9 @@ import './Guestbook.css';
 const INITIAL_ENTRIES = [
   {
     id: 'entry-1',
-    name: 'Pip ☁️',
+    name: 'Baby Giggles 💖',
     avatar: '👶🏻',
-    message: 'Giggles! You stole my giant lollipop again! But I forgive you because you are cute!',
+    message: 'Welcome to my Candyland studio! Grab a sweet lollipop and make a wish on the rainbow! 🍭✨',
     date: 'Just now',
     sticker: '🍭',
   },
@@ -44,8 +44,18 @@ export function Guestbook() {
   const { gigglesReact, incrementHitCount } = useInteraction();
 
   const [entries, setEntries] = useState(() => {
-    const saved = localStorage.getItem('giggles_guestbook_entries');
-    return saved ? JSON.parse(saved) : INITIAL_ENTRIES;
+    try {
+      const saved = localStorage.getItem('giggles_guestbook_entries');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.map((item) =>
+          item.id === 'entry-1' && item.name.includes('Pip') ? INITIAL_ENTRIES[0] : item
+        );
+      }
+      return INITIAL_ENTRIES;
+    } catch {
+      return INITIAL_ENTRIES;
+    }
   });
 
   const [authorName, setAuthorName] = useState('');

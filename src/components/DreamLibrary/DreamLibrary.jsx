@@ -53,7 +53,7 @@ export const TRACK_CATALOG = [
 
 const INITIAL_CUSTOM_PLAYLISTS = [
   {
-    id: 'pips-favorites',
+    id: 'giggles-favorites',
     name: "Giggles' Cozy Bedtime Mix",
     trackIds: ['cloud-pillow', 'sleepy-star', 'tiny-moon'],
   },
@@ -69,12 +69,16 @@ export function DreamLibrary() {
   const [customPlaylists, setCustomPlaylists] = useState(() => {
     try {
       const saved = localStorage.getItem('giggles_custom_playlists');
-      return saved ? JSON.parse(saved) : INITIAL_CUSTOM_PLAYLISTS;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.map((p) => (p.id === 'pips-favorites' ? { ...p, id: 'giggles-favorites' } : p));
+      }
+      return INITIAL_CUSTOM_PLAYLISTS;
     } catch {
       return INITIAL_CUSTOM_PLAYLISTS;
     }
   });
-  const [activeCustomPlaylistId, setActiveCustomPlaylistId] = useState('pips-favorites');
+  const [activeCustomPlaylistId, setActiveCustomPlaylistId] = useState('giggles-favorites');
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(false);
   const [selectedTrackToAdd, setSelectedTrackToAdd] = useState('cloud-pillow');
@@ -302,11 +306,11 @@ export function DreamLibrary() {
 
   return (
     <div className="dream-library-root" role="region" aria-label="Giggles Dream Library Audio Experience">
-      {/* Top Banner with Sleepy Pip Art */}
+      {/* Top Banner with Sleepy Giggles Art */}
       <div className="library-hero-card">
         <img
           src="/images/pip_moon_sleep.jpg"
-          alt="Baby Giggles sleeping on a crescent moon"
+          alt="Baby Giggles sleeping peacefully on a crescent moon"
           className="library-hero-art"
         />
         <div className="library-hero-meta">

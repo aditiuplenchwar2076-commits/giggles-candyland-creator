@@ -893,3 +893,123 @@
   font-size: 10px;
   cursor: pointer;
 }
+
+/* Mobile Responsiveness (< 768px) */
+@media (max-width: 767px) {
+  .candyland-creator-root {
+    padding: 6px 2px;
+    gap: 8px;
+  }
+
+  .creator-title {
+    font-size: 20px;
+  }
+
+  .creator-tagline {
+    font-size: 11.5px;
+    padding: 0 8px;
+  }
+
+  .garden-canvas {
+    border-radius: 14px;
+    border-width: 2.5px;
+    max-height: 260px;
+    aspect-ratio: 16 / 10;
+  }
+
+  .giggles-character-img {
+    width: 80px;
+    border-radius: 14px;
+  }
+
+  .giggles-cloud-cushion {
+    width: 90px;
+    height: 40px;
+  }
+
+  .control-secondary-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px;
+  }
+
+  .bg-switcher-group {
+    flex-shrink: 0;
+  }
+
+  .bg-pill-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .outline-mode-toggle-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .control-actions-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    width: 100%;
+  }
+
+  .action-btn {
+    min-height: 44px;
+    font-size: 12px;
+    padding: 8px;
+    justify-content: center;
+  }
+
+  .tray-tabs-bar {
+    display: flex;
+    gap: 4px;
+  }
+
+  .tray-tab-btn {
+    flex: 1;
+    padding: 8px 4px;
+    font-size: 11px;
+  }
+
+  .tab-icon {
+    font-size: 14px;
+  }
+
+  .tab-count {
+    display: none;
+  }
+
+  .panels-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .candy-grid-container {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .candy-item-btn {
+    min-height: 54px;
+    padding: 4px;
+    font-size: 10px;
+  }
+
+  .palette-circles-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .palette-color-swatch {
+    width: 34px;
+    height: 34px;
+  }
+}

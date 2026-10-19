@@ -13,15 +13,26 @@ export function GigglesCompanion() {
     setCommentaryMuted,
     gigglesReact,
     incrementHitCount,
+    windows,
   } = useInteraction();
 
   const companionRef = useRef(null);
   const bubbleRef = useRef(null);
   const characterImgRef = useRef(null);
 
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(() => {
+    return typeof window !== 'undefined' && window.innerWidth < 768;
+  });
   const [corner, setCorner] = useState('bottom-right'); // 'bottom-right' | 'bottom-left'
   const [pokeCount, setPokeCount] = useState(0);
+
+  // Auto-minimize on mobile when a window opens
+  const hasOpenWindow = Object.values(windows || {}).some((w) => w.isOpen && !w.isMinimized);
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768 && hasOpenWindow) {
+      setIsMinimized(true);
+    }
+  }, [hasOpenWindow]);
 
   // GSAP idle and mood animations
   useEffect(() => {

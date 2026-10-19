@@ -1,16 +1,29 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { soundService } from '../../services/soundService';
 import { useInteraction } from '../../services/interactionContext';
+import { transformToBabyPortrait } from '../../services/babyTransformEngine';
+import { createSamplePortrait } from '../../services/samplePortraits';
 import './EasterEggModal.css';
 
 export function EasterEggModal({ isOpen, onClose }) {
   const { gigglesReact, incrementHitCount } = useInteraction();
 
-  const [step, setStep] = useState('star_sky'); // 'star_sky' | 'camera_consent' | 'camera_active' | 'photo_result'
+  // Steps: 'photo_setup' | 'star_sky' | 'camera_active' | 'processing' | 'photo_result'
+  const [step, setStep] = useState('photo_setup');
   const [starClicked, setStarClicked] = useState(false);
-  const [photoDataUrl, setPhotoDataUrl] = useState(null);
-  const [cameraError, setCameraError] = useState(null);
 
+  // Photos
+  const [originalPhoto, setOriginalPhoto] = useState(null);
+  const [babyResultPhoto, setBabyResultPhoto] = useState(null);
+  const [viewMode, setViewMode] = useState('baby'); // 'baby' | 'original' | 'split'
+
+  // Engine & Status
+  const [engineMode, setEngineMode] = useState('local'); // 'local' | 'cloud'
+  const [processingStatus, setProcessingStatus] = useState('Preparing magical baby-fication...');
+  const [cameraError, setCameraError] = useState(null);
+  const [resultMeta, setResultMeta] = useState(null);
+
+  const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
 
@@ -21,7 +34,6 @@ export function EasterEggModal({ isOpen, onClose }) {
     }
   }, []);
 
-  // Play mystical secret chime when opened
   useEffect(() => {
     if (isOpen) {
       soundService.playSecret();
@@ -30,7 +42,6 @@ export function EasterEggModal({ isOpen, onClose }) {
     }
   }, [isOpen, stopCamera]);
 
-  // Clean up camera stream on unmount
   useEffect(() => {
     return () => {
       stopCamera();
@@ -44,15 +55,34 @@ export function EasterEggModal({ isOpen, onClose }) {
     incrementHitCount(3);
   };
 
-  const handleProceedToConsent = () => {
-    setStep('camera_consent');
+  const handleProceedToMagic = () => {
+    setStep('photo_setup');
   };
 
+  // 1. File Upload
+  const handleFileUpload = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file (PNG, JPG, or WEBP).');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      setOriginalPhoto(evt.target.result);
+      soundService.playPop();
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // 2. Camera Start
   const handleStartCamera = async () => {
     try {
       setCameraError(null);
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
+        video: { width: { ideal: 640 }, height: { ideal: 640 }, facingMode: 'user' },
       });
       streamRef.current = stream;
       setStep('camera_active');
@@ -61,169 +91,157 @@ export function EasterEggModal({ isOpen, onClose }) {
       setTimeout(() => {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          videoRef.current.play();
+          videoRef.current.play().catch(console.error);
         }
       }, 100);
     } catch (err) {
       console.warn('Camera access denied or unavailable:', err);
-      setCameraError('Camera access was not granted or is unavailable on this device. You can try our offline photo transformation mode below!');
-      setStep('camera_consent');
+      setCameraError('Camera access unavailable on this device. You can choose a photo from your files or try a sample portrait!');
     }
   };
 
-  const handleCapturePhoto = () => {
+  // 3. Snap Camera Photo
+  const handleCaptureCamera = () => {
     const video = videoRef.current;
     if (!video) return;
 
     const canvas = document.createElement('canvas');
     canvas.width = 640;
-    canvas.height = 480;
+    canvas.height = 640;
     const ctx = canvas.getContext('2d');
 
-    // Draw live video frame (mirrored)
+    // Draw mirrored
     ctx.translate(640, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, 640, 480);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(video, 0, 0, 640, 640);
 
-    // Apply Giggles Cute Transformation Overlays:
-    // 1. Rosy Cheeks
-    ctx.fillStyle = 'rgba(255, 110, 167, 0.45)';
-    ctx.beginPath();
-    ctx.arc(240, 260, 36, 0, Math.PI * 2);
-    ctx.arc(400, 260, 36, 0, Math.PI * 2);
-    ctx.fill();
+    const dataUrl = canvas.toDataURL('image/png');
+    stopCamera();
+    setOriginalPhoto(dataUrl);
+    setStep('photo_setup');
+    soundService.playPop();
+  };
 
-    // 2. Golden Hair Curl
-    ctx.strokeStyle = '#F9C74F';
-    ctx.lineWidth = 14;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.arc(320, 110, 24, 0.4 * Math.PI, 1.8 * Math.PI);
-    ctx.stroke();
+  // 4. Sample Photos
+  const handleUseSample = (type = 'friend') => {
+    const sampleUrl = createSamplePortrait(type);
+    setOriginalPhoto(sampleUrl);
+    soundService.playPop();
+  };
 
-    // 3. Giant Lollipop Sticker in Corner
-    const lolliImg = new Image();
-    lolliImg.src = '/images/giggles_main.png';
-    lolliImg.onload = () => {
-      ctx.drawImage(lolliImg, 420, 260, 200, 200);
-      const finalData = canvas.toDataURL('image/png');
-      setPhotoDataUrl(finalData);
-      setStep('photo_result');
-      stopCamera();
-      gigglesReact('photo_ready');
-      incrementHitCount(5);
-    };
+  // 5. Run Genuine Baby Transformation
+  const handleTransform = async () => {
+    if (!originalPhoto) return;
 
-    // Fallback if image load delays
-    setTimeout(() => {
-      if (!photoDataUrl) {
-        const finalData = canvas.toDataURL('image/png');
-        setPhotoDataUrl(finalData);
+    setStep('processing');
+    soundService.playPop();
+    gigglesReact('photo_ready');
+
+    try {
+      const res = await transformToBabyPortrait(originalPhoto, {
+        mode: engineMode,
+        onProgress: (p) => setProcessingStatus(p.text),
+      });
+
+      if (res && res.dataUrl) {
+        setBabyResultPhoto(res.dataUrl);
+        setResultMeta(res);
         setStep('photo_result');
-        stopCamera();
+        setViewMode('baby');
+        soundService.playChime();
+        incrementHitCount(5);
+      } else {
+        throw new Error('Transformation returned empty result.');
       }
-    }, 250);
+    } catch (err) {
+      console.error('Baby transformation error:', err);
+      alert('Could not complete transformation: ' + err.message);
+      setStep('photo_setup');
+    }
   };
 
-  const handleFallbackAvatar = () => {
-    // Generate adorable local avatar without camera
-    const canvas = document.createElement('canvas');
-    canvas.width = 500;
-    canvas.height = 500;
-    const ctx = canvas.getContext('2d');
+  // 6. Download Output
+  const handleDownload = (format = 'png') => {
+    const src = viewMode === 'original' ? originalPhoto : babyResultPhoto;
+    if (!src) return;
 
-    // Pastel gradient background
-    const grad = ctx.createLinearGradient(0, 0, 500, 500);
-    grad.addColorStop(0, '#FFE0EC');
-    grad.addColorStop(1, '#E2D3FC');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 500, 500);
-
-    // Baby cloud
-    ctx.fillStyle = '#FFF';
-    ctx.beginPath();
-    ctx.arc(250, 380, 160, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Main sprite
-    const img = new Image();
-    img.src = '/images/giggles_main.png';
-    img.onload = () => {
-      ctx.drawImage(img, 60, 90, 380, 320);
-      ctx.fillStyle = '#D81B60';
-      ctx.font = 'bold 24px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText("CERTIFIED GIGGLES TWIN 🍭", 250, 440);
-      setPhotoDataUrl(canvas.toDataURL('image/png'));
-      setStep('photo_result');
-      gigglesReact('photo_ready');
-    };
-  };
-
-  const handleDownload = () => {
-    if (!photoDataUrl) return;
     const a = document.createElement('a');
-    a.href = photoDataUrl;
-    a.download = `giggles_twin_${Date.now()}.png`;
+    a.href = src;
+    a.download = `baby_giggles_twin_${Date.now()}.${format}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     soundService.playChime();
   };
 
+  const handleReset = () => {
+    setOriginalPhoto(null);
+    setBabyResultPhoto(null);
+    setStep('photo_setup');
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="easter-egg-backdrop" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="easter-egg-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-label="Baby-Me Magic Modal">
       <div className="easter-egg-modal-card" onClick={(e) => e.stopPropagation()}>
-        {/* Step 1: Starry Night Discovery */}
+        {/* TOP BAR */}
+        <div className="modal-top-bar">
+          <div className="modal-title-group">
+            <span className="modal-icon" aria-hidden="true">✨</span>
+            <span className="modal-header-text">
+              {step === 'star_sky' ? 'Secret Midnight Discovery' : 'Baby-Me Magic Studio 📸'}
+            </span>
+          </div>
+          <button
+            type="button"
+            className="modal-close-icon-btn"
+            onClick={onClose}
+            aria-label="Close modal"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* SCENE 1: STARRY NIGHT SKY DISCOVERY */}
         {step === 'star_sky' && (
           <div className="starry-sky-scene">
-            <div className="starry-sky-header">
-              <span className="sky-tag">✨ Secret Midnight Discovery</span>
-              <button type="button" className="close-sky-btn" onClick={onClose}>✕</button>
-            </div>
-
             <p className="sky-hint-text">
-              You noticed the secret glowing star! Tap the shimmering golden star in the center to reveal its mystery.
+              You noticed the secret glowing star! Tap the shimmering star to unlock its mystery.
             </p>
 
             <div className="sky-canvas-arena">
-              {/* Twinkling ambient stars */}
               <div className="ambient-star s1">✦</div>
               <div className="ambient-star s2">★</div>
               <div className="ambient-star s3">✦</div>
               <div className="ambient-star s4">★</div>
               <div className="ambient-star s5">✦</div>
 
-              {/* The Discovery Star */}
               <button
                 type="button"
                 className={`secret-golden-star ${starClicked ? 'opened' : ''}`}
                 onClick={handleStarClick}
-                aria-label="Click the secret glowing star"
+                aria-label="Click secret glowing star"
               >
                 ⭐
               </button>
             </div>
 
-            {/* Revealed Message */}
             {starClicked && (
               <div className="star-secret-card">
                 <span className="secret-dialog-quote">
-                  "Psst... want to see what your version of Giggles looks like?"
+                  "Psst... Want to see what your adorable baby self looks like?!"
                 </span>
                 <p className="secret-dialog-sub">
-                  Become Giggles' twin! We can add rosy cheeks, golden curls, and a swirl lollipop to your photo!
+                  Turn your photo into an adorable chubby-cheeked baby with rosy cheeks, big sparkling eyes, and a sweet pastel smile!
                 </p>
                 <div className="secret-actions">
                   <button
                     type="button"
-                    className="btn btn-primary"
-                    onClick={handleProceedToConsent}
+                    className="btn btn-primary magic-glow-btn"
+                    onClick={handleProceedToMagic}
                   >
-                    Yes! Show Me! 📸✨
+                    Baby-Me Magic ✨ Turn Me Into Baby Giggles!
                   </button>
                   <button type="button" className="btn btn-secondary" onClick={onClose}>
                     Maybe Later ☁️
@@ -234,91 +252,250 @@ export function EasterEggModal({ isOpen, onClose }) {
           </div>
         )}
 
-        {/* Step 2: Camera Privacy & Consent */}
-        {step === 'camera_consent' && (
-          <div className="consent-scene">
-            <div className="consent-icon">📸🔒</div>
-            <h3 className="consent-title">Privacy First, Pure Fun!</h3>
-            <div className="consent-box">
-              <p>
-                <strong>How it works:</strong> Your browser will turn on your webcam locally for a quick snapshot.
+        {/* SCENE 2: PHOTO SETUP & PREVIEW */}
+        {step === 'photo_setup' && (
+          <div className="photo-setup-scene">
+            <div className="setup-hero">
+              <h3 className="setup-title">Baby-Me Magic 👶🏻✨</h3>
+              <p className="setup-subtitle">
+                Provide your portrait photograph! Our transformation engine preserves your facial resemblance, smile, and identity while morphing you into an adorable pastel baby.
               </p>
-              <ul>
-                <li>✓ <strong>100% Local:</strong> Your photo is never sent to any server or AI company.</li>
-                <li>✓ <strong>Zero Storage:</strong> The image stays in your device memory only.</li>
-                <li>✓ <strong>Instant Release:</strong> The camera turns completely off immediately after capture.</li>
-              </ul>
             </div>
 
-            {cameraError && <div className="camera-err-msg">{cameraError}</div>}
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleFileUpload}
+            />
 
-            <div className="consent-actions">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleStartCamera}
-              >
-                Allow Camera & Take Photo 📸
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={handleFallbackAvatar}
-              >
-                Generate Twin Avatar (No Camera) 🎨
-              </button>
-              <button type="button" className="btn btn-link" onClick={onClose}>
-                Cancel
-              </button>
+            {!originalPhoto ? (
+              /* Selection Triggers */
+              <div className="photo-picker-grid">
+                <button
+                  type="button"
+                  className="picker-card-btn"
+                  onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                >
+                  <span className="picker-icon">📁</span>
+                  <span className="picker-title">Upload Photo</span>
+                  <span className="picker-sub">Choose from your phone or PC</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="picker-card-btn"
+                  onClick={handleStartCamera}
+                >
+                  <span className="picker-icon">📸</span>
+                  <span className="picker-title">Take Selfie</span>
+                  <span className="picker-sub">Use device webcam or camera</span>
+                </button>
+
+                <div className="sample-strip">
+                  <span className="sample-label">Or test with a sample:</span>
+                  <div className="sample-btns-row">
+                    <button
+                      type="button"
+                      className="sample-chip"
+                      onClick={() => handleUseSample('friend')}
+                    >
+                      👤 Sample Portrait 1
+                    </button>
+                    <button
+                      type="button"
+                      className="sample-chip"
+                      onClick={() => handleUseSample('stargazer')}
+                    >
+                      🌟 Sample Portrait 2
+                    </button>
+                  </div>
+                </div>
+
+                {cameraError && <div className="camera-err-msg">{cameraError}</div>}
+              </div>
+            ) : (
+              /* Photo Selected & Ready */
+              <div className="photo-preview-box">
+                <div className="preview-frame">
+                  <img src={originalPhoto} alt="Your portrait preview" className="preview-thumb" />
+                  <div className="preview-overlay-badge">Ready to Baby-fy! ✨</div>
+                </div>
+
+                <div className="preview-actions-row">
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                  >
+                    Replace Photo 🔄
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={handleReset}
+                  >
+                    Remove ✕
+                  </button>
+                </div>
+
+                {/* Transformation Engine Selector */}
+                <div className="engine-selector-card">
+                  <div className="engine-options-row">
+                    <label className={`engine-option ${engineMode === 'local' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="engine"
+                        checked={engineMode === 'local'}
+                        onChange={() => setEngineMode('local')}
+                      />
+                      <div>
+                        <strong>⚡ High-Fidelity Local Morph</strong>
+                        <span>Instant, private & 100% in-browser</span>
+                      </div>
+                    </label>
+
+                    <label className={`engine-option ${engineMode === 'cloud' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="engine"
+                        checked={engineMode === 'cloud'}
+                        onChange={() => setEngineMode('cloud')}
+                      />
+                      <div>
+                        <strong>☁️ Cloud AI Studio</strong>
+                        <span>Serverless generative API</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Big Action Button */}
+                <button
+                  type="button"
+                  className="btn btn-primary transform-launch-btn"
+                  onClick={handleTransform}
+                >
+                  Make My Baby Portrait ✨
+                </button>
+              </div>
+            )}
+
+            <div className="privacy-guarantee-note">
+              🔒 <strong>100% Safe & Private:</strong> Your photos are processed safely in your browser session and never sold, trained on, or stored permanently.
             </div>
           </div>
         )}
 
-        {/* Step 3: Camera Live View */}
+        {/* SCENE 3: LIVE CAMERA VIEW */}
         {step === 'camera_active' && (
           <div className="camera-live-scene">
-            <h3 className="live-title">Smile for Giggles! 👶🏻✨</h3>
+            <h3 className="live-title">Smile for Baby Giggles! 👶🏻✨</h3>
             <div className="video-viewport">
               <video ref={videoRef} autoPlay playsInline muted className="live-video" />
-              {/* Overlay preview guides */}
-              <div className="cheek-guide left" />
-              <div className="cheek-guide right" />
+              <div className="face-oval-guide" />
               <div className="curl-guide">🌀</div>
             </div>
+
             <div className="live-actions">
               <button
                 type="button"
                 className="btn btn-primary btn-snap"
-                onClick={handleCapturePhoto}
+                onClick={handleCaptureCamera}
               >
                 📸 Snap Photo!
               </button>
-              <button type="button" className="btn btn-secondary" onClick={onClose}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  stopCamera();
+                  setStep('photo_setup');
+                }}
+              >
                 Cancel
               </button>
             </div>
           </div>
         )}
 
-        {/* Step 4: Photo Result & Download */}
+        {/* SCENE 4: ANIMATED PROCESSING STATE */}
+        {step === 'processing' && (
+          <div className="processing-scene">
+            <div className="processing-baby-badge">
+              <span className="baby-spinner-icon">🍭</span>
+            </div>
+            <h3 className="processing-title">Transforming Into Baby Giggles...</h3>
+            <p className="processing-status-text">{processingStatus}</p>
+
+            <div className="processing-bar-track">
+              <div className="processing-bar-fill" />
+            </div>
+            <span className="processing-hint">Mixing sprinkles, big eyes, and pastel stardust ✨</span>
+          </div>
+        )}
+
+        {/* SCENE 5: BEFORE & AFTER RESULT */}
         {step === 'photo_result' && (
           <div className="photo-result-scene">
-            <span className="result-badge">🎉 CERTIFIED GIGGLES TWIN! 🎉</span>
-            <div className="result-img-frame">
-              <img src={photoDataUrl} alt="Transformed Giggles Twin" className="result-img" />
+            <div className="result-header-row">
+              <span className="result-badge">🎉 CERTIFIED BABY GIGGLES! 🎉</span>
+              <div className="view-mode-toggle" role="tablist" aria-label="Preview mode">
+                <button
+                  type="button"
+                  className={`view-mode-btn ${viewMode === 'baby' ? 'active' : ''}`}
+                  onClick={() => setViewMode('baby')}
+                >
+                  👶 Baby Version
+                </button>
+                <button
+                  type="button"
+                  className={`view-mode-btn ${viewMode === 'original' ? 'active' : ''}`}
+                  onClick={() => setViewMode('original')}
+                >
+                  Original
+                </button>
+              </div>
             </div>
+
+            <div className="result-img-frame">
+              <img
+                src={viewMode === 'baby' ? babyResultPhoto : originalPhoto}
+                alt={viewMode === 'baby' ? 'Baby Giggles Transformed Portrait' : 'Original Portrait'}
+                className="result-img"
+              />
+              <div className="result-img-tag">
+                {viewMode === 'baby' ? '✨ Baby-fied by Giggles Studio' : 'Original Photo'}
+              </div>
+            </div>
+
             <p className="result-text">
-              Look at you with Giggles' rosy cheeks, golden curl, and swirl lollipop! Certified cutie! 💖
+              Look at those chubby cheeks and sparkling baby eyes! 💖 Your facial resemblance is certified adorable!
             </p>
+
             <div className="result-actions">
-              <button type="button" className="btn btn-primary" onClick={handleDownload}>
-                📥 Download Twin Photo
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => handleDownload('png')}
+              >
+                Download PNG 💾
               </button>
-              <button type="button" className="btn btn-secondary" onClick={() => setStep('camera_consent')}>
-                Take Another 🔄
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => handleDownload('jpg')}
+              >
+                Download JPEG 📸
               </button>
-              <button type="button" className="btn btn-link" onClick={onClose}>
-                Done ✨
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleReset}
+              >
+                Try Another Photo 🔄
               </button>
             </div>
           </div>

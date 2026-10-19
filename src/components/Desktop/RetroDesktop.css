@@ -22,41 +22,91 @@
   background: var(--theme-wallpaper-bg, radial-gradient(circle at 75% 25%, #FFF0F7 0%, #F5E8FF 40%, #E3F2FD 80%, #DCEEFF 100%));
 }
 
-/* Clouds in Wallpaper */
+/* Fluffy Cartoon Clouds in Wallpaper */
 .wallpaper-cloud {
   position: absolute;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(4px);
-  border-radius: 50px;
+  background: #FFFFFF;
+  border-radius: 100px;
+  pointer-events: none;
   animation: cloud-drift 24s infinite alternate ease-in-out;
+  filter: drop-shadow(0 10px 22px rgba(255, 182, 218, 0.35));
+}
+
+.wallpaper-cloud::before,
+.wallpaper-cloud::after {
+  content: '';
+  position: absolute;
+  background: #FFFFFF;
+  border-radius: 50%;
 }
 
 .wallpaper-cloud.wc1 {
-  width: 260px;
-  height: 90px;
-  top: 15%;
-  left: 10%;
-  box-shadow: 0 10px 25px rgba(255, 183, 213, 0.3);
+  width: 200px;
+  height: 60px;
+  top: 12%;
+  left: 14%;
+}
+
+.wallpaper-cloud.wc1::before {
+  width: 82px;
+  height: 82px;
+  top: -40px;
+  left: 28px;
+}
+
+.wallpaper-cloud.wc1::after {
+  width: 58px;
+  height: 58px;
+  top: -26px;
+  left: 100px;
 }
 
 .wallpaper-cloud.wc2 {
-  width: 320px;
-  height: 110px;
-  top: 40%;
-  right: 15%;
+  width: 240px;
+  height: 70px;
+  top: 38%;
+  right: 10%;
   animation-duration: 32s;
   animation-delay: -5s;
-  box-shadow: 0 12px 30px rgba(183, 132, 245, 0.25);
+  filter: drop-shadow(0 12px 24px rgba(183, 132, 245, 0.28));
+}
+
+.wallpaper-cloud.wc2::before {
+  width: 96px;
+  height: 96px;
+  top: -48px;
+  left: 34px;
+}
+
+.wallpaper-cloud.wc2::after {
+  width: 72px;
+  height: 72px;
+  top: -34px;
+  left: 118px;
 }
 
 .wallpaper-cloud.wc3 {
-  width: 220px;
-  height: 80px;
-  bottom: 25%;
+  width: 180px;
+  height: 54px;
+  bottom: 22%;
   left: 28%;
   animation-duration: 28s;
   animation-delay: -10s;
-  box-shadow: 0 8px 20px rgba(100, 181, 246, 0.2);
+  filter: drop-shadow(0 10px 20px rgba(100, 181, 246, 0.25));
+}
+
+.wallpaper-cloud.wc3::before {
+  width: 72px;
+  height: 72px;
+  top: -36px;
+  left: 26px;
+}
+
+.wallpaper-cloud.wc3::after {
+  width: 52px;
+  height: 52px;
+  top: -24px;
+  left: 90px;
 }
 
 @keyframes cloud-drift {
@@ -64,24 +114,43 @@
   100% { transform: translate(30px, 15px); }
 }
 
-/* Wallpaper Centerpiece */
+/* Wallpaper Centerpiece: Vibrant Character Showcase */
 .wallpaper-centerpiece {
   position: absolute;
-  top: 45%;
+  top: 48%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  opacity: 0.28;
   pointer-events: none;
   text-align: center;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.wallpaper-giggles-badge {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border: 4px solid #FFFFFF;
+  border-radius: 28px;
+  padding: 8px;
+  box-shadow: 0 16px 40px rgba(255, 110, 167, 0.35), 0 4px 12px rgba(156, 39, 176, 0.12);
+  margin-bottom: 12px;
+  animation: centerpiece-float 4.5s ease-in-out infinite alternate;
+}
+
+@keyframes centerpiece-float {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
 }
 
 .wallpaper-giggles-img {
-  width: 220px;
-  filter: grayscale(0.2) drop-shadow(0 10px 20px rgba(255, 110, 167, 0.4));
-  margin-bottom: 8px;
+  width: 230px;
+  height: auto;
+  display: block;
+  border-radius: 20px;
+  filter: drop-shadow(0 4px 12px rgba(255, 110, 167, 0.25));
 }
 
 .wallpaper-title {
@@ -89,13 +158,22 @@
   font-size: 32px;
   font-weight: 800;
   color: #302A43;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9);
+  margin: 0;
 }
 
 .wallpaper-subtitle {
+  font-family: 'Nunito', sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: #8E24AA;
+  margin: 6px 0 0;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255, 182, 218, 0.6);
+  box-shadow: 0 4px 12px rgba(255, 110, 167, 0.12);
 }
 
 /* Secret Easter Egg Star */
@@ -166,30 +244,156 @@
   100% { filter: hue-rotate(60deg); }
 }
 
+.wallpaper-magic-pill {
+  margin-top: 10px;
+  background: linear-gradient(135deg, #FF4081 0%, #D81B60 60%, #9C27B0 100%);
+  color: #FFF;
+  border: 2px solid #FFF;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(216, 27, 96, 0.35);
+  pointer-events: auto;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wallpaper-magic-pill:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 8px 24px rgba(216, 27, 96, 0.5);
+}
+
+.mobile-top-bar {
+  display: none;
+}
+
 /* Mobile Overrides */
 @media (max-width: 767px) {
+  .wallpaper-cloud {
+    display: none; /* Keep mobile viewport clean and uncluttered */
+  }
+
+  .mobile-top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid #FFB7D5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mobile-brand-icon {
+    font-size: 20px;
+  }
+
+  .mobile-brand-name {
+    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: #D81B60;
+  }
+
+  .mobile-star-btn {
+    background: linear-gradient(135deg, #FF4081 0%, #9C27B0 100%);
+    color: #FFF;
+    border: none;
+    border-radius: 14px;
+    padding: 6px 12px;
+    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(216, 27, 96, 0.3);
+  }
+
   .desktop-shortcuts-grid {
+    position: absolute;
+    top: 54px;
+    left: 6px;
+    right: 6px;
+    bottom: auto;
+    max-width: 100%;
+    width: auto;
     flex-direction: row;
     flex-wrap: wrap;
-    max-width: 100vw;
-    width: 100%;
-    left: 8px;
-    right: 8px;
-    top: 8px;
-    bottom: auto;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
+    z-index: 5;
+  }
+
+  .desktop-shortcut {
+    width: 68px !important;
+    padding: 4px 2px !important;
+    gap: 4px !important;
+  }
+
+  .shortcut-icon-card {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 12px !important;
+  }
+
+  .shortcut-icon {
+    font-size: 20px !important;
+  }
+
+  .shortcut-label {
+    font-size: 9.5px !important;
+    line-height: 1.1 !important;
   }
 
   .wallpaper-centerpiece {
-    opacity: 0.18;
+    top: auto;
+    bottom: 58px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.95;
+    z-index: 1;
+    width: 90vw;
+  }
+
+  .wallpaper-giggles-badge {
+    padding: 4px;
+    border-radius: 16px;
+    margin-bottom: 4px;
   }
 
   .wallpaper-giggles-img {
-    width: 150px;
+    width: 110px;
   }
 
   .wallpaper-title {
-    font-size: 22px;
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .wallpaper-subtitle {
+    font-size: 10px;
+    padding: 2px 8px;
+    margin-top: 2px;
+  }
+
+  .wallpaper-magic-pill {
+    display: none;
+  }
+
+  .desktop-secret-star {
+    display: none;
   }
 }

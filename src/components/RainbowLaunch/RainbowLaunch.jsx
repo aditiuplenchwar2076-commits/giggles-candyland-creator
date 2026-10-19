@@ -485,70 +485,101 @@ export function RainbowLaunch() {
     }
   };
 
+  const [aimTension, setAimTension] = useState(55);
+  const [aimElevationDeg, setAimElevationDeg] = useState(38);
+
+  const updateAim = useCallback((newTension, newElevation) => {
+    const t = Math.max(20, Math.min(maxPull, newTension));
+    const el = Math.max(15, Math.min(75, newElevation));
+    setAimTension(t);
+    setAimElevationDeg(el);
+
+    const elRad = (el * Math.PI) / 180;
+    const dragX = anchor.x - Math.cos(elRad) * t;
+    const dragY = anchor.y + Math.sin(elRad) * t;
+
+    physicsRef.current.isPulling = true;
+    physicsRef.current.dragPos = { x: dragX, y: dragY };
+  }, [anchor.x, anchor.y, maxPull]);
+
+  const handleMobileLaunch = () => {
+    if (gameState !== 'aiming' || shotsLeft <= 0) return;
+    const elRad = (aimElevationDeg * Math.PI) / 180;
+    const dragX = anchor.x - Math.cos(elRad) * aimTension;
+    const dragY = anchor.y + Math.sin(elRad) * aimTension;
+    physicsRef.current.isPulling = true;
+    physicsRef.current.dragPos = { x: dragX, y: dragY };
+    handlePointerUp();
+  };
+
   // Keyboard Aiming and Firing Controls
   useEffect(() => {
-    let tension = 50;
-    let angleRad = Math.PI * 0.82;
-
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
       if (gameState !== 'aiming' || shotsLeft <= 0) return;
 
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        tension = Math.min(maxPull, tension + 6);
-        physicsRef.current.isPulling = true;
-        physicsRef.current.dragPos = {
-          x: anchor.x - Math.cos(angleRad) * tension,
-          y: anchor.y + Math.sin(angleRad) * tension,
-        };
         soundService.playStretch(0.2);
         gigglesReact('slingshot_stretch');
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        tension = Math.max(15, tension - 6);
-        physicsRef.current.isPulling = true;
-        physicsRef.current.dragPos = {
-          x: anchor.x - Math.cos(angleRad) * tension,
-          y: anchor.y + Math.sin(angleRad) * tension,
-        };
-        soundService.playStretch(0.2);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        angleRad = Math.min(Math.PI * 0.96, angleRad + 0.07);
-        physicsRef.current.isPulling = true;
-        physicsRef.current.dragPos = {
-          x: anchor.x - Math.cos(angleRad) * tension,
-          y: anchor.y + Math.sin(angleRad) * tension,
-        };
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        angleRad = Math.max(Math.PI * 0.55, angleRad - 0.07);
-        physicsRef.current.isPulling = true;
-        physicsRef.current.dragPos = {
-          x: anchor.x - Math.cos(angleRad) * tension,
-          y: anchor.y + Math.sin(angleRad) * tension,
-        };
-      } else if (e.key === ' ' || e.key === 'Enter') {
-        e.preventDefault();
-        if (physicsRef.current.isPulling) {
-          handlePointerUp();
-        } else {
+        setAimTension((prev) => {
+          const next = Math.min(maxPull, prev + 6);
+          const elRad = (aimElevationDeg * Math.PI) / 180;
           physicsRef.current.isPulling = true;
           physicsRef.current.dragPos = {
-            x: anchor.x - Math.cos(angleRad) * tension,
-            y: anchor.y + Math.sin(angleRad) * tension,
+            x: anchor.x - Math.cos(elRad) * next,
+            y: anchor.y + Math.sin(elRad) * next,
           };
-          setTimeout(() => {
-            handlePointerUp();
-          }, 60);
-        }
+          return next;
+        });
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        soundService.playStretch(0.2);
+        setAimTension((prev) => {
+          const next = Math.max(20, prev - 6);
+          const elRad = (aimElevationDeg * Math.PI) / 180;
+          physicsRef.current.isPulling = true;
+          physicsRef.current.dragPos = {
+            x: anchor.x - Math.cos(elRad) * next,
+            y: anchor.y + Math.sin(elRad) * next,
+          };
+          return next;
+        });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        soundService.playStretch(0.2);
+        setAimElevationDeg((prev) => {
+          const next = Math.min(75, prev + 5);
+          const elRad = (next * Math.PI) / 180;
+          physicsRef.current.isPulling = true;
+          physicsRef.current.dragPos = {
+            x: anchor.x - Math.cos(elRad) * aimTension,
+            y: anchor.y + Math.sin(elRad) * aimTension,
+          };
+          return next;
+        });
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        soundService.playStretch(0.2);
+        setAimElevationDeg((prev) => {
+          const next = Math.max(15, prev - 5);
+          const elRad = (next * Math.PI) / 180;
+          physicsRef.current.isPulling = true;
+          physicsRef.current.dragPos = {
+            x: anchor.x - Math.cos(elRad) * aimTension,
+            y: anchor.y + Math.sin(elRad) * aimTension,
+          };
+          return next;
+        });
+      } else if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        handleMobileLaunch();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [anchor.x, anchor.y, gameState, gigglesReact, maxPull, shotsLeft]);
+  }, [aimElevationDeg, aimTension, anchor.x, anchor.y, gameState, gigglesReact, maxPull, shotsLeft]);
 
   const handleNextLevel = () => {
     if (currentLevelIndex + 1 < LEVELS.length) {
@@ -660,6 +691,83 @@ export function RainbowLaunch() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* On-Screen Mobile Touch Aim & Launch Controls */}
+      <div className="mobile-touch-controls" role="group" aria-label="Touch Aim and Launch Controls">
+        <div className="aim-control-row">
+          <div className="aim-pill-group">
+            <span className="aim-pill-label">⚡ Tension: <strong>{aimTension}px</strong></span>
+            <div className="aim-btn-pair">
+              <button
+                type="button"
+                className="aim-stepper-btn"
+                aria-label="Decrease Pull Tension"
+                disabled={gameState !== 'aiming' || shotsLeft <= 0}
+                onClick={() => {
+                  soundService.playStretch(0.2);
+                  updateAim(aimTension - 8, aimElevationDeg);
+                }}
+              >
+                ➖
+              </button>
+              <button
+                type="button"
+                className="aim-stepper-btn"
+                aria-label="Increase Pull Tension"
+                disabled={gameState !== 'aiming' || shotsLeft <= 0}
+                onClick={() => {
+                  soundService.playStretch(0.2);
+                  updateAim(aimTension + 8, aimElevationDeg);
+                }}
+              >
+                ➕
+              </button>
+            </div>
+          </div>
+
+          <div className="aim-pill-group">
+            <span className="aim-pill-label">📐 Angle: <strong>{aimElevationDeg}°</strong></span>
+            <div className="aim-btn-pair">
+              <button
+                type="button"
+                className="aim-stepper-btn"
+                aria-label="Lower Angle"
+                disabled={gameState !== 'aiming' || shotsLeft <= 0}
+                onClick={() => {
+                  soundService.playStretch(0.2);
+                  updateAim(aimTension, aimElevationDeg - 5);
+                }}
+              >
+                ▼
+              </button>
+              <button
+                type="button"
+                className="aim-stepper-btn"
+                aria-label="Raise Angle"
+                disabled={gameState !== 'aiming' || shotsLeft <= 0}
+                onClick={() => {
+                  soundService.playStretch(0.2);
+                  updateAim(aimTension, aimElevationDeg + 5);
+                }}
+              >
+                ▲
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-launch-candy"
+          disabled={gameState !== 'aiming' || shotsLeft <= 0}
+          onClick={handleMobileLaunch}
+        >
+          <span className="launch-icon">🚀</span>
+          <span className="launch-text">
+            {gameState === 'flying' ? 'Candy in Flight...' : 'LAUNCH CANDY!'}
+          </span>
+        </button>
       </div>
 
       {/* Controls & Tip Bar */}

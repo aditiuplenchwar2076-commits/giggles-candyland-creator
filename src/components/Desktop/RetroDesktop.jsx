@@ -39,15 +39,25 @@ export function RetroDesktop() {
         <div className="wallpaper-cloud wc2" />
         <div className="wallpaper-cloud wc3" />
 
-        {/* Center Giggles watermark illustration */}
+        {/* Center Giggles Character Illustration Showcase */}
         <div className="wallpaper-centerpiece">
-          <img
-            src="/images/giggles_main.png"
-            alt=""
-            className="wallpaper-giggles-img"
-          />
-          <span className="wallpaper-title">Giggles OS 2026</span>
-          <span className="wallpaper-subtitle">The Baby Who Makes The Internet Smile 👶🏻🍬</span>
+          <div className="wallpaper-giggles-badge">
+            <img
+              src="/images/giggles_main.png"
+              alt="Baby Giggles with golden curl and peppermint swirl lollipop"
+              className="wallpaper-giggles-img"
+            />
+          </div>
+          <h1 className="wallpaper-title">Giggles OS 2026</h1>
+          <p className="wallpaper-subtitle">The Baby Who Makes The Internet Smile 👶🏻🍬</p>
+          <button
+            type="button"
+            className="wallpaper-magic-pill"
+            onClick={handleSecretStarClick}
+            aria-label="Open Baby-Me Magic photo transformer"
+          >
+            📸 Baby-Me Magic: Turn Me Into Giggles! ✨
+          </button>
         </div>
 
         {/* Subtle, discoverable Easter Egg Star in the sky */}
@@ -62,7 +72,26 @@ export function RetroDesktop() {
         </button>
       </div>
 
-      {/* Desktop Shortcuts Column */}
+      {/* Mobile Top Navigation Bar (< 768px) */}
+      <header className="mobile-top-bar" aria-label="Mobile Navigation">
+        <div className="mobile-brand">
+          <span className="mobile-brand-icon">👶🏻</span>
+          <span className="mobile-brand-name">Giggles OS</span>
+        </div>
+        <div className="mobile-bar-actions">
+          <button
+            type="button"
+            className="mobile-star-btn"
+            onClick={handleSecretStarClick}
+            title="Open Baby-Me Magic"
+            aria-label="Baby-Me Magic"
+          >
+            📸 Baby-Me Magic
+          </button>
+        </div>
+      </header>
+
+      {/* Desktop / Mobile Shortcuts Grid */}
       <div className="desktop-shortcuts-grid" role="group" aria-label="Desktop applications">
         <DesktopShortcut
           id="candyland"
@@ -83,6 +112,13 @@ export function RetroDesktop() {
           label="Rainbow Launch"
           icon="🦄"
           badge="Project 3"
+          onOpen={openWindow}
+        />
+        <DesktopShortcut
+          id="easter_egg"
+          label="Baby-Me Magic"
+          icon="📸"
+          badge="Magic ✨"
           onOpen={openWindow}
         />
         <DesktopShortcut
