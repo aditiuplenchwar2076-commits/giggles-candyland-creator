@@ -5,6 +5,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/giggles_demo.mp4",
+      "destination": "/giggles_60s_demo.mp4"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },

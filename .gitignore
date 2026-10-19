@@ -26,3 +26,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Scratch audio and root video files
+*.wav
+/giggles_60s_demo.mp4
+/giggles_90s_demo.mp4
+
